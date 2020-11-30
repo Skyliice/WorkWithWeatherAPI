@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -44,6 +45,8 @@ namespace WorkWithWeatherAPI
                     answer = await reader.ReadToEndAsync();
                 }
             }
+            WeatherResponse wrresponse = JsonConvert.DeserializeObject<WeatherResponse>(answer);
+            Console.WriteLine("Текущая погода в городе "+wrresponse.name +": "+wrresponse.main.temp +" градусов по цельсию.\nПо ощущениям: "+wrresponse.main.feels_like+" градусов.");
             response.Close();
         }
     }
