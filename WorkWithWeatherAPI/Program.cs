@@ -46,7 +46,7 @@ namespace WorkWithWeatherAPI
                 }
             }
             WeatherResponse CurWeather = JsonConvert.DeserializeObject<WeatherResponse>(answer);
-            Console.WriteLine("Текущая погода в городе "+CurWeather.name +": "+CurWeather.main.temp +" градусов по цельсию.\nПо ощущениям: "+CurWeather.main.feels_like+" градусов.");
+            Console.WriteLine("Текущая погода в городе "+CurWeather.Name +": "+CurWeather.Main.Temp +" градусов по цельсию.\nПо ощущениям: "+CurWeather.Main.Feels_like+" градусов.");
             response.Close();
         }
     }
