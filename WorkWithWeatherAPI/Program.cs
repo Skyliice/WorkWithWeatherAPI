@@ -35,7 +35,7 @@ namespace WorkWithWeatherAPI
         {
            
             string answer;
-            WebRequest request = WebRequest.Create($"https://api.openweathermap.org/data/2.5/weather?id=" + CountryID + "&units=metric&APPID=" + AppID);
+            WebRequest request = WebRequest.Create("https://api.openweathermap.org/data/2.5/weather?id=" + CountryID + "&units=metric&APPID=" + AppID);
             request.Method = "POST";
             WebResponse response = await request.GetResponseAsync();
             using (Stream s = response.GetResponseStream())
