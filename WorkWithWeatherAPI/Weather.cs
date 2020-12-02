@@ -18,16 +18,16 @@ namespace WorkWithWeatherAPI
     public class WeatherNow
     {
         [JsonProperty(PropertyName = "main")]
-        public string Main;
+        public string Main { get; set; }
         [JsonProperty(PropertyName = "description")]
-        public string Description;
+        public string Description { get; set; }
     }
 
     public class WeatherResponse
     {
         [JsonProperty(PropertyName ="main")]
-        public Temperature Main;
+        public Temperature Main { get; set; }
         [JsonProperty(PropertyName = "name")]
-        public string Name;
+        public string Name { get; set; }
     }
 }
