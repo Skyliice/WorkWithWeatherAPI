@@ -35,7 +35,7 @@ namespace WorkWithWeatherAPI
         {
            
             string answer;
-            WebRequest request = WebRequest.Create("https://api.openweathermap.org/data/2.5/weather?id=" + CountryID + "&units=metric&APPID=" + AppID);
+            WebRequest request = WebRequest.Create($"https://api.openweathermap.org/data/2.5/weather?id=" + CountryID + "&units=metric&APPID=" + AppID);
             request.Method = "POST";
             WebResponse response = await request.GetResponseAsync();
             using (Stream s = response.GetResponseStream())
@@ -45,8 +45,8 @@ namespace WorkWithWeatherAPI
                     answer = await reader.ReadToEndAsync();
                 }
             }
-            WeatherResponse wrresponse = JsonConvert.DeserializeObject<WeatherResponse>(answer);
-            Console.WriteLine("Текущая погода в городе "+wrresponse.name +": "+wrresponse.main.temp +" градусов по цельсию.\nПо ощущениям: "+wrresponse.main.feels_like+" градусов.");
+            WeatherResponse CurWeather = JsonConvert.DeserializeObject<WeatherResponse>(answer);
+            Console.WriteLine("Текущая погода в городе "+CurWeather.name +": "+CurWeather.main.temp +" градусов по цельсию.\nПо ощущениям: "+CurWeather.main.feels_like+" градусов.");
             response.Close();
         }
     }

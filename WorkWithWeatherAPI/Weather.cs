@@ -22,6 +22,5 @@ namespace WorkWithWeatherAPI
     {
         public Temperature main;
         public string name;
-        public WeatherNow[] weather;
     }
 }
