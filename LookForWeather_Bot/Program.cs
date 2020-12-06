@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using WeatherConnect;
@@ -8,27 +9,35 @@ namespace LookForWeather_Bot
     class Program
     {
         private static ITelegramBotClient botClient;
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             botClient = new TelegramBotClient("1421567335:AAHUyMhHm4Kl6rcA65IO7Ldw0r4aWXCNGzM") { Timeout = TimeSpan.FromSeconds(10) };
-
-            var me = botClient.GetMeAsync().Result;
-
-            
-
-            Console.WriteLine($"bot name: {me.FirstName}");
-            
+            await botClient.GetMeAsync();
             botClient.OnMessage += Bot_OnMessage;
             botClient.StartReceiving();
             var s = botClient.MessageOffset;
             Console.ReadKey();
         }
-       static int i;
+
+        async static void ShowWeather(long ChatId,string CountryName)
+        {
+            var ApiConn = new WeatherConn();
+            ApiConn.GetWeather(CountryName).Wait();
+            var Imgurl = $"https://openweathermap.org/img/wn/{WeatherInfo.CurWeather.WeatherNews[0].WeatherIcon}@4x.png";
+            var Citystr = $"Выбранный город: {WeatherInfo.CurWeather.CityName}";
+            var CurTemp = $"\nТекущая температура в цельсиях: {WeatherInfo.CurWeather.Main.CityTemperature}";
+            var CurFeelsTemp= $"\nПо ощущениям: {WeatherInfo.CurWeather.Main.TemperatureFeelslike}";
+            var CurWeatherr = $"\nПогода: {WeatherInfo.CurWeather.WeatherNews[0].MainWeather}";
+            var CurPressure = $"\nДавление: {WeatherInfo.CurWeather.Main.Pressure}";
+            var CurHumidity = $"\nВлажность: {WeatherInfo.CurWeather.Main.Humidity}%";
+            var CurWindSpeed = $"\nСкорость ветра: {WeatherInfo.CurWeather.CurrentWind.Speed} м/с";
+            var FinalString = String.Concat(Citystr, CurTemp, CurFeelsTemp, CurWeatherr, CurPressure, CurHumidity, CurWindSpeed);
+            await botClient.SendPhotoAsync(chatId: ChatId, photo: Imgurl, caption: FinalString);
+        }
+
         private async static void Bot_OnMessage(object sender, MessageEventArgs e)
         {
             var message = e?.Message?.Text;
-            i++;
-            Console.WriteLine($"Message {i}: {message}");
             if (message == null)
                 return;
             string[] words=message.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -41,12 +50,7 @@ namespace LookForWeather_Bot
                         await botClient.SendTextMessageAsync(chatId: e.Message.Chat.Id, text: "Привет! Меня зовут WeatherNow и как ты уже понял я являюсь ботом. Моей основной (и единственной) задачей является отслеживание погоды в любой части света. Для начала работы со мной напиши команду: Погода <Название Города>");
                         break;
                     case "погода":
-                        var CountryName = words[1];
-                        var ApiConn = new WeatherConn();
-                        ApiConn.GetWeather(CountryName).Wait();
-                        await botClient.SendPhotoAsync(chatId: e.Message.Chat.Id, photo: "https://openweathermap.org/img/wn/" + WeatherInfo.CurWeather.WeatherNews[0].WeatherIcon + "@4x.png", caption: $"Выбранный город: {WeatherInfo.CurWeather.CityName}\nТекущая погода в цельсиях: {WeatherInfo.CurWeather.Main.CityTemperature}" +
-                          $"\nПо ощущениям: {WeatherInfo.CurWeather.Main.TemperatureFeelslike}\nПогода: {WeatherInfo.CurWeather.WeatherNews[0].MainWeather}" +
-                          $"\nДавление: {WeatherInfo.CurWeather.Main.Pressure}\nВлажность: {WeatherInfo.CurWeather.Main.Humidity}%\nСкорость ветра: {WeatherInfo.CurWeather.CurrentWind.Speed} м/с");
+                        ShowWeather(e.Message.Chat.Id,words[1]);
                         break;
                     case "помощь":
                         await botClient.SendTextMessageAsync(chatId: e.Message.Chat.Id, text: "Для работы с ботом необходимо написать команду в таком виде:\n Погода <Название Города>");
