@@ -6,21 +6,21 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using WeatherConnect;
 
 namespace WorkWithWeatherAPI
 {
     class Program
     {
-        //ID Санкт-петербурга: 498817
-        //ID Москвы: 524901
-        static string CountryID;
+        static string CountryName;
         static void Main(string[] args)
         {
-            Console.Write("Введите ID города: ");
-            CountryID = Console.ReadLine();
+            var WeatherCon = new WeatherConn();
+            Console.Write("Введите название города: ");
+            CountryName = Console.ReadLine();
             try
             {
-                ConnectAsync().Wait();
+                WeatherCon.GetWeather(CountryName).Wait();
                 Console.WriteLine("Успешно");
             }
             catch
@@ -30,24 +30,7 @@ namespace WorkWithWeatherAPI
             Console.ReadKey();
         }
 
-        const string AppID = "83bcb7916396f617361adf11fc02cd33";
-        public static async Task ConnectAsync()
-        {
-           
-            string answer;
-            WebRequest request = WebRequest.Create("https://api.openweathermap.org/data/2.5/weather?id=" + CountryID + "&units=metric&APPID=" + AppID);
-            request.Method = "POST";
-            WebResponse response = await request.GetResponseAsync();
-            using (Stream s = response.GetResponseStream())
-            {
-                using (StreamReader reader = new StreamReader(s))
-                {
-                    answer = await reader.ReadToEndAsync();
-                }
-            }
-            WeatherResponse CurWeather = JsonConvert.DeserializeObject<WeatherResponse>(answer);
-            Console.WriteLine("Текущая погода в городе "+CurWeather.Name +": "+CurWeather.Main.Temp +" градусов по цельсию.\nПо ощущениям: "+CurWeather.Main.Feels_like+" градусов.");
-            response.Close();
-        }
+        
+        
     }
 }
