@@ -7,6 +7,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using WeatherConnect;
+using System.Configuration;
 
 namespace WorkWithWeatherAPI
 {
@@ -20,8 +21,9 @@ namespace WorkWithWeatherAPI
             CountryName = Console.ReadLine();
             try
             {
-                WeatherCon.GetWeather(CountryName).Wait();
+                WeatherCon.GetWeather(CountryName, ConfigurationSettings.AppSettings["appId"]).Wait();
                 Console.WriteLine("Успешно");
+                Console.WriteLine($"Город: {WeatherInfo.CurWeather.CityName}\nТемпература:{WeatherInfo.CurWeather.Main.CityTemperature}");
             }
             catch
             {

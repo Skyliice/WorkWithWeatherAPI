@@ -6,18 +6,19 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Configuration;
 
 namespace WeatherConnect
 {
     public class WeatherConn
     {
-        private const string AppID = "83bcb7916396f617361adf11fc02cd33";
-        public async Task GetWeather(string CountryName)
+        public async Task GetWeather(string CountryName,string appId)
         {
             string answer;
-            WebRequest request = WebRequest.Create($"https://api.openweathermap.org/data/2.5/weather?q={CountryName}&units=metric&APPID={AppID}");
+            var url = String.Format("https://api.openweathermap.org/data/2.5/weather?q={0}&units=metric&APPID={1}", CountryName, appId);
+            var request = WebRequest.Create(url);
             request.Method = "POST";
-            WebResponse response = await request.GetResponseAsync();
+            var response = await request.GetResponseAsync();
             using (var s = response.GetResponseStream())
             {
                 using (var reader = new StreamReader(s))
