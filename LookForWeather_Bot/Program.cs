@@ -25,17 +25,26 @@ namespace LookForWeather_Bot
         async static void ShowWeather(long ChatId,string CountryName)
         {
             var ApiConn = new WeatherConn();
-            ApiConn.GetWeather(CountryName,configuration["appId"]).Wait();
-            var Imgurl = $"https://openweathermap.org/img/wn/{WeatherInfo.CurWeather.WeatherNews[0].WeatherIcon}@4x.png";
-            var Citystr = $"Выбранный город: {WeatherInfo.CurWeather.CityName}";
-            var CurTemp = $"\nТекущая температура в цельсиях: {WeatherInfo.CurWeather.Main.CityTemperature}";
-            var CurFeelsTemp= $"\nПо ощущениям: {WeatherInfo.CurWeather.Main.TemperatureFeelslike}";
-            var CurWeatherr = $"\nПогода: {WeatherInfo.CurWeather.WeatherNews[0].MainWeather}";
-            var CurPressure = $"\nДавление: {WeatherInfo.CurWeather.Main.Pressure}";
-            var CurHumidity = $"\nВлажность: {WeatherInfo.CurWeather.Main.Humidity}%";
-            var CurWindSpeed = $"\nСкорость ветра: {WeatherInfo.CurWeather.CurrentWind.Speed} м/с";
-            var FinalString = String.Concat(Citystr, CurTemp, CurFeelsTemp, CurWeatherr, CurPressure, CurHumidity, CurWindSpeed);
-            await botClient.SendPhotoAsync(chatId: ChatId, photo: Imgurl, caption: FinalString);
+            try
+            {
+                ApiConn.GetWeather(CountryName, configuration["appId"]).Wait();
+                var Imgurl = $"https://openweathermap.org/img/wn/{WeatherInfo.CurWeather.WeatherNews[0].WeatherIcon}@4x.png";
+                var Citystr = $"Выбранный город: {WeatherInfo.CurWeather.CityName}";
+                var CurTemp = $"\nТекущая температура в цельсиях: {WeatherInfo.CurWeather.Main.CityTemperature}";
+                var CurFeelsTemp = $"\nПо ощущениям: {WeatherInfo.CurWeather.Main.TemperatureFeelslike}";
+                var CurWeatherr = $"\nПогода: {WeatherInfo.CurWeather.WeatherNews[0].MainWeather}";
+                var CurPressure = $"\nДавление: {WeatherInfo.CurWeather.Main.Pressure}";
+                var CurHumidity = $"\nВлажность: {WeatherInfo.CurWeather.Main.Humidity}%";
+                var CurWindSpeed = $"\nСкорость ветра: {WeatherInfo.CurWeather.CurrentWind.Speed} м/с";
+                var FinalString = String.Concat(Citystr, CurTemp, CurFeelsTemp, CurWeatherr, CurPressure, CurHumidity, CurWindSpeed);
+                await botClient.SendPhotoAsync(chatId: ChatId, photo: Imgurl, caption: FinalString);
+            }
+            catch (Exception e)
+            {
+                var SendableMessage = "Ошибка при обработке сообщения. Загляни в <Помощь> и проверь правильно ли ты написал команду!";
+                SendMessage(ChatId, SendableMessage);
+            }
+            
         }
 
         async static void SendMessage(long ChatId,string message)
